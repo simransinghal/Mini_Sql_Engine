@@ -1,0 +1,3 @@
+Handled spaces: Any number of spaces can be persent in the query
+Handled empty string
+Capital, small or mixture words(select, from, where)
