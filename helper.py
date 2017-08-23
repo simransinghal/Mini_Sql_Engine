@@ -1,5 +1,7 @@
 import csv
+import re
 from class_table import *
+import operator
 
 def getDB():
     table_list = []
@@ -97,14 +99,38 @@ def GetOperator(where_query):
 
 def getHash(from_query, require_tables):
     i = 0
-    dictonary = {}
+    dictionary = {}
     for table in require_tables:
         for attr in table.attr:
-            dictonary[table.name + '.' + attr] = i
+            dictionarydictionary[table.name + '.' + attr] = i
             i = i + 1
+
+    if len(require_tables) == 1:
+        i = 0
+        for attr in require_tables[0].attr:
+            dictionarydictionary[attr] = i
+            i = i + 1
+        return dictonary
+
+    new_dictionary = dictionary
+    else:
+        i = 0
+        for attr1 in require_tables[0].attr:
+            j = 0
+            for attr2 in require_tables[1].attr:
+                if attr1 == attr2:
+                    return dictionary
+
+                else:
+                    new_dictionary[attr1] = i
+                    new_dictionary[attr2] = i + j
+                j = j + 1
+            i = i + 1
+    return new_dictionary
+
 ##########################################################################
 
-def SingleCondition(conditions, h, relational_ops, joinTable):
+def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
     "If single condition in where"
     symbols = ['=', '>', '<', '>=', '<=']
     operator = ''
@@ -112,5 +138,39 @@ def SingleCondition(conditions, h, relational_ops, joinTable):
     for sym in symbols:
         if sym in conditions[0]:
             operator = sym
-            split_condition = conditions[0].split(operator)
+            conditions = re.findall(r'[^(%s)\s]+' %operator , conditions[0])
+
+    if operator == '':
+        return False, []
+
+    if len(conditions) != 2:
+        #There can be only be only two operators
+        return False, []
+
+    table = []
+    for row in joinTable:
+        if conditions[0] in attr_dictionary:
+            i = attr_dictionary[conditions[0]]
+        else:
+            return False, []
+
+        #Either it's a column name or a number
+        if conditions[1] in attr_dictionary:         #check if it's a column name
+            j = attr_dictionary[conditions[1]]
+            if ops_dictionary[operator](int(row(i)), int(row(j))):
+                table.append(row)
+
+        else:                                       #check if it's a number
+            if conditions[1].isdigit():
+                j = conditions[1]
+                if ops_dictionary[operator](int(row(i)), int(j)):
+                    table.append(row)
+            else:
+                #Found characters other than numeric
+                return False, []
+    return True, table
+
+#################################################################################
+
+def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, operator):
             
