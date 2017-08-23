@@ -1,6 +1,7 @@
 
 import sys
 from validator import *
+from execute import *
 
 if __name__ == "__main__":
 
@@ -16,5 +17,5 @@ if __name__ == "__main__":
             continue
 
         #Execute commands, which are syntatically parsed
-        execute(parsed_list)
-            
+        result = execute(parsed_list)
+        print result
