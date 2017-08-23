@@ -24,4 +24,7 @@ def FromValidation(query):
     if '' in temp_query:
         return False,''
 
+    if(len(query) > 2):
+        return False, ''    
+
     return True, query
