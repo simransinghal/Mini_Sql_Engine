@@ -144,7 +144,7 @@ def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
         return False, []
 
     if len(conditions) != 2:
-        #There can be only be only two operators
+        #There can be only be only two operand
         return False, []
 
     table = []
@@ -173,4 +173,24 @@ def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
 #################################################################################
 
 def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, operator):
-            
+    '''For two conditions in where joined by AND or OR'''
+
+    symbols = ['=', '>', '<', '>=', '<=']
+    op1 = ''
+    op2 = ''
+
+    for sym in symbols:
+        if sym in conditions[0]:
+            op1 = sym
+            cond1 = conditions[0].split(op1)
+        if sym in conditions[1]:
+            op2 = sym
+            cond2 = conditions[1].split(op2)
+
+    if op1 == '' or op2 == '':
+        #No operator found, INVALID
+        return False, []
+
+    if len(cond1) != 2 or len(cond2) != 2:
+        #There can be only be only two operand
+        return False, []
