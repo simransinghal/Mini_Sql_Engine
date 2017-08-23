@@ -31,4 +31,9 @@ def execute(parsed_list):
             if result == 'False':
                 return False
 
-    execute_select(joinTable, select_query, from_query, require_tables)            
+    result, finalTable = execute_select(joinTable, select_query, from_query, require_tables)
+    if result == False:
+        return False
+
+    printTable(finalTable, select_query)
+    return 0                
