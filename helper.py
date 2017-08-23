@@ -102,15 +102,15 @@ def getHash(from_query, require_tables):
     dictionary = {}
     for table in require_tables:
         for attr in table.attr:
-            dictionarydictionary[table.name + '.' + attr] = i
+            dictionary[table.name + '.' + attr] = i
             i = i + 1
 
     if len(require_tables) == 1:
         i = 0
         for attr in require_tables[0].attr:
-            dictionarydictionary[attr] = i
+            dictionary[attr] = i
             i = i + 1
-        return dictonary
+        return dictionary
 
     new_dictionary = dictionary
     else:
@@ -228,4 +228,4 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
             if val1 or val2:
                 table.append(row)
 
-    return True, table                    
+    return True, table
