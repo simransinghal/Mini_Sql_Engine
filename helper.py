@@ -160,7 +160,7 @@ def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
             if ops_dictionary[operator](int(row(i)), int(row(j))):
                 table.append(row)
 
-        else:                                       #check if it's a number
+        else:                               #check if it's a number
             if conditions[1].isdigit():
                 j = conditions[1]
                 if ops_dictionary[operator](int(row(i)), int(j)):
@@ -194,3 +194,38 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
     if len(cond1) != 2 or len(cond2) != 2:
         #There can be only be only two operand
         return False, []
+
+    table = []
+    for row in joinTable:
+        if cond1[0] in attr_dictionary and cond2[0] in attr_dictionary:
+            i1 = attr_dictionary[cond1[0]]
+            i3 = attr_dictionary[cond2[0]]
+        else:
+            return False, []
+
+        if cond1[1] in attr_dictionary:
+            i2 = attr_dictionary[cond1[1]]
+        elif cond1[1].isdigit():
+            i2 = cond1[1]
+        else:
+            return False, []
+
+        if cond2[1] in attr_dictionary:
+            i4 = attr_dictionary[cond2[1]]
+
+        elif cond2[1].isdigit():
+            i4 = cond2[1]
+        else:
+            return False, []
+
+        val1 = ops_dictionary[op1](int(row(i1)), int(row(i2)))
+        val2 = ops_dictionary[op2](int(row(i3)), int(row(i4)))
+
+        if operator == 'AND':
+            if val1 and val2:
+                table.append(row)
+        else:
+            if val1 or val2:
+                table.append(row)
+
+    return True, table                    

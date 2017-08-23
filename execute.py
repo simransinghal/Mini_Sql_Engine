@@ -27,6 +27,8 @@ def execute(parsed_list):
                 require_tables.append(t)
 
     if where_query != []:
-            result = execute_where(joinTable, where_query, from_query, require_tables)
+            result, joinTable = execute_where(joinTable, where_query, from_query, require_tables)
             if result == 'False':
                 return False
+
+    execute_select(joinTable, select_query, from_query, require_tables)            
