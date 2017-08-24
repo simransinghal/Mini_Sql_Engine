@@ -1,6 +1,7 @@
 from class_table import *
 from helper import *
 from execute_where import *
+from execute_select import *
 
 def execute(parsed_list):
     select_query = parsed_list[0]
@@ -9,8 +10,8 @@ def execute(parsed_list):
 
     table_list = getDB()
     result = ValidateTablename(from_query, table_list)
-    if result == False:
-        return False
+    if result != True:
+        return result
 
     X, Y = GetTablesRows(from_query, table_list)
 
@@ -28,12 +29,12 @@ def execute(parsed_list):
 
     if where_query != []:
             result, joinTable = execute_where(joinTable, where_query, from_query, require_tables)
-            if result == 'False':
-                return False
+            if result != 'True':
+                return result
 
     result, finalTable = execute_select(joinTable, select_query, from_query, require_tables)
-    if result == False:
-        return False
+    if result != True:
+        return result
 
     printTable(finalTable, select_query)
-    return 0                
+    return 0

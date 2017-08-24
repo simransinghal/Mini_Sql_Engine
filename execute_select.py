@@ -24,7 +24,7 @@ def execute_select(joinTable, select_query, from_query, require_tables):
             if q in attr_dictionary:
                 index.append(attr_dictionary[q])
             else:
-                return False, []
+                return "Error: Attribute does not exist", []
 
         finalTable = [[row[i] for i in index] for row in joinTable]
         return True, finalTable
@@ -39,7 +39,7 @@ def execute_select(joinTable, select_query, from_query, require_tables):
                     flag = 1
 
             if flag == 0:
-                return False, []
+                return "Error: Invalid Syntax", []
 
         #Required columns from Select query
         col_index = []
@@ -48,18 +48,18 @@ def execute_select(joinTable, select_query, from_query, require_tables):
             op = x.split(')')
             if len(op) != 2:
                 #Braces not balanced
-                return False, []
+                return "Error: Improper Braces", []
 
             if '' not in op:
                 #Case like Max(A)B
-                return False, []
+                return "Error: Invalid Syntax", []
 
             op = op[0].split('(')
             if len(op) != 2:
-                return False, []
+                return "Error: Improper Braces", []
 
             if op[1] not in attr_dictionary:
-                return False, []
+                return "Error: Attribute does not exist", []
 
             col_index.append(attr_dictionary[op[1]])
             operation.append(op[0])
