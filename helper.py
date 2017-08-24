@@ -250,10 +250,42 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
 
 ###################################################################################
 
-def printTable(finalTable, select_query):
+def printTable(finalTable, select_query, require_tables):
     for q in select_query:
-        print q
+        if 'distinct' in q or 'DISTINCT' in q or 'Distinct' in q:
+            print select_query[0]
+            for element in finalTable:
+                print element
+            return
+
+    temp = []
+    if '*' in select_query:
+        if len(require_tables) > 1:
+
+            for i in range(len(require_tables[0].attr)):
+                require_tables[0].attr[i] = require_tables[0].name + '.' + require_tables[0].attr[i]
+
+            for i in range(len(require_tables[1].attr)):
+                require_tables[1].attr[i] = require_tables[1].name + '.' + require_tables[1].attr[i]
+
+            temp = require_tables[0].attr + require_tables[1].attr
+
+        if len(require_tables) == 1:
+
+            for i in range(len(require_tables[0].attr)):
+                require_tables[0].attr[i] = require_tables[0].name + '.' + require_tables[0].attr[i]
+
+            temp = require_tables[0].attr
+
+    else :
+        for q in select_query:
+            temp.append(q)
+
+    print(" ".join([element for element in temp]))
 
     for row in finalTable:
         #print row
-        print (" ".join([element for element in row]))
+        if isinstance(row,list):
+            print (" ".join([element for element in row]))
+        else:
+            print row

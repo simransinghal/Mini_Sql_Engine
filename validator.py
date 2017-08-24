@@ -10,11 +10,11 @@ def ValidateQuery(query):
     #check for empty string-------------------------
     length_query = len(query)
     if length_query == 0:
-        return False, ''
+        return 'T', ''
 
     #Check for the ; in the end----------------------
     if query[length_query - 1] != ';':
-        return False, ''
+        return 'Error: Invalid Syntax ; is not present', ''
     '''
     #Add space before ; if not present
     if(query[length_query - 2] != ' '):
@@ -33,22 +33,22 @@ def ValidateQuery(query):
 
     #For valid query (length > 1) in all other cases invalid query
     if length_query <= 1:
-        return False, ''
+        return 'Error: Invalid Syntax', ''
 
     #Check for 'SELECT' and elements between 'SELECT' and 'FROM'-------------------------
     result, select_query = SelectValidation(query)
-    if result == False:
-        return False, ''
+    if result != True:
+        return result, ''
 
     #Check for elements between 'FROM' and 'WHERE'--------------------------
     result, from_query = FromValidation(query)
-    if result == False:
-        return False, ''
+    if result != True:
+        return result, ''
 
     #Check for elements after 'WHERE'-------------------------------
     result, where_query = WhereValidation(query)
-    if result == False:
-        return False, ''
+    if result != True:
+        return result, ''
 
     parsed_list = [select_query, from_query, where_query]
 

@@ -97,6 +97,30 @@ def execute_select(joinTable, select_query, from_query, require_tables):
         for x in temp_table:
             N = N + 1
 
+        Distinct_present = 'NO'
+        Any_other = 'NO'
+        for i in range(len(operation)):
+            if operation[i] in ['DISTINCT', 'distinct','Distinct']:
+                Distinct_present = 'YES'
+            else:
+                Any_other = 'YES'
+
+        if Distinct_present == 'YES' and Any_other == 'YES':
+            return 'Error: Distinct can not be used with other functions', []
+
+        if Distinct_present == 'YES' and Any_other == 'NO':
+            finalTable = []
+            for i in range(len(operation)):
+                if i == 0:
+                    finalTable = distinctArr[i]
+                else:
+                    temp = []
+                    for j in range(len(distinctArr[i])):
+                        if distinctArr[i][j] not in finalTable:
+                            temp.append(distinctArr[i][j])
+                    finalTable = finalTable + temp        
+            return True,finalTable
+
         finalTable = []
         for i in range(len(operation)):
             if operation[i] in ['SUM','sum','Sum']:

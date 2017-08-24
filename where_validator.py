@@ -7,7 +7,7 @@ def WhereValidation(query):
 
     #Multiplle where are invalid
     if len(query) > 2:
-        return False, ''
+        return 'Error: Invalid Syntax mutiple wheres present', ''
 
     if len(query) == 2:
         temp_query = query[1].strip().split(","); #split only about comma
@@ -15,7 +15,7 @@ def WhereValidation(query):
 
         #Checking case "WHERE A = B,;"
         if '' in temp_query:
-            return False,''
+            return 'Error: Invalid Syntax',''
 
         return True, query
 
