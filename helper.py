@@ -65,8 +65,12 @@ def GetTablesRows(from_query, table_list):
 
 def Join(X, Y):
     joinTable = []
-    for row1 in X:
+    '''for row1 in X:
         for row2 in Y:
+            joinTable.append(row1 + row2)
+    '''
+    for row2 in Y:
+        for row1 in X:
             joinTable.append(row1 + row2)
     return joinTable
 
@@ -113,20 +117,29 @@ def getHash(from_query, require_tables):
         return dictionary
 
     else:
-        new_dictionary = dictionary
-        i = 0
+
+        temp = []
         for attr1 in require_tables[0].attr:
-            j = 0
             for attr2 in require_tables[1].attr:
                 if attr1 == attr2:
-                    return dictionary
+                    temp.append(attr1)
 
-                else:
-                    new_dictionary[attr1] = i
-                    new_dictionary[attr2] = i + j
-                j = j + 1
+        if temp == []:
+            return dictionary
+
+        i = 0
+        for attr1 in require_tables[0].attr:
+            if attr1 not in temp:
+                dictionary[attr1] = i;
             i = i + 1
-    return new_dictionary
+
+        j = 0
+        for attr2 in require_tables[1].attr:
+            if attr2 not in temp:
+                dictionary[attr2] = len(require_tables[0].attr) + j
+            j = j + 1
+
+    return dictionary
 
 ##########################################################################
 
@@ -135,19 +148,19 @@ def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
     symbols = ['=', '>', '<', '>=', '<=']
     operator = ''
 
-    i = 0
     for sym in symbols:
         if sym in conditions[0]:
-            i = i + 1
             operator = sym
             conditions = re.findall(r'[^(%s)\s]+' %operator , conditions[0])
 
     if operator == '':
         return "Error: Valid Operator does not exist", []
 
-    if i != 2:
+    '''
+    if i != 1:
         #There can be only be only two operand
         return "Error: Invalid Syntax in condition", []
+    '''
 
     table = []
     for row in joinTable:
@@ -159,13 +172,14 @@ def SingleCondition(conditions, attr_dictionary, ops_dictionary, joinTable):
         #Either it's a column name or a number
         if conditions[1] in attr_dictionary:         #check if it's a column name
             j = attr_dictionary[conditions[1]]
-            if ops_dictionary[operator](int(row(i)), int(row(j))):
+
+            if ops_dictionary[operator](int(row[i]), int(row[j])):
                 table.append(row)
 
         else:                               #check if it's a number
             if conditions[1].isdigit():
                 j = conditions[1]
-                if ops_dictionary[operator](int(row(i)), int(j)):
+                if ops_dictionary[operator](int(row[i]), int(j)):
                     table.append(row)
             else:
                 #Found characters other than numeric
@@ -181,15 +195,11 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
     op1 = ''
     op2 = ''
 
-    i = 0
-    j = 0
     for sym in symbols:
         if sym in conditions[0]:
-            i = i + 1
             op1 = sym
             cond1 = conditions[0].split(op1)
         if sym in conditions[1]:
-            j = j + 1
             op2 = sym
             cond2 = conditions[1].split(op2)
 
@@ -197,9 +207,10 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
         #No operator found, INVALID
         return "Error: Valid Operator does not exist", []
 
-    if i != 1 or j != 1:
+    '''if i != 1 or j != 1:
         #There can be only be only two operand
         return "Error: Invalid Syntax in condition", []
+    '''
 
     table = []
     for row in joinTable:
@@ -211,21 +222,22 @@ def DoubleCondition(conditions, attr_dictionary, ops_dictionary, joinTable, oper
 
         if cond1[1] in attr_dictionary:
             i2 = attr_dictionary[cond1[1]]
+            val1 = ops_dictionary[op1](int(row[i1]), int(row[i2]))
         elif cond1[1].isdigit():
             i2 = cond1[1]
+            val1 = ops_dictionary[op1](int(row[i1]), int(i2))
         else:
             return "Error: Invalid operand", []
 
         if cond2[1] in attr_dictionary:
             i4 = attr_dictionary[cond2[1]]
+            val2 = ops_dictionary[op2](int(row[i3]), int(row[i4]))
 
         elif cond2[1].isdigit():
             i4 = cond2[1]
+            val2 = ops_dictionary[op2](int(row[i3]), int(i4))
         else:
             return "Error: Invalid operand", []
-
-        val1 = ops_dictionary[op1](int(row(i1)), int(row(i2)))
-        val2 = ops_dictionary[op2](int(row(i3)), int(row(i4)))
 
         if operator == 'AND':
             if val1 and val2:
@@ -243,5 +255,5 @@ def printTable(finalTable, select_query):
         print q
 
     for row in finalTable:
-        print row
-        #print (" ".join([element for element in row]))
+        #print row
+        print (" ".join([element for element in row]))
