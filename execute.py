@@ -36,5 +36,5 @@ def execute(parsed_list):
     if result != True:
         return result
 
-    printTable(finalTable, select_query)
-    return 0
+    printTable(finalTable, select_query, require_tables)
+    return True
