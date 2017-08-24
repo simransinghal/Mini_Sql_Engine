@@ -29,7 +29,7 @@ def execute(parsed_list):
 
     if where_query != []:
             result, joinTable = execute_where(joinTable, where_query, from_query, require_tables)
-            if result != 'True':
+            if result != True:
                 return result
 
     result, finalTable = execute_select(joinTable, select_query, from_query, require_tables)

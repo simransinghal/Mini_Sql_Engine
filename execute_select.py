@@ -2,9 +2,12 @@ from helper import *
 import sys
 
 def execute_select(joinTable, select_query, from_query, require_tables):
-    agg_func = ['MAX', 'MIN', 'SUM', 'AVG','DISTINCT','max','min','sum','avg','distinct']
+    agg_func = ['MAX', 'MIN', 'SUM', 'AVG','DISTINCT','max','min','sum','avg','distinct','Max','Min', 'Sum','Avg','Distinct']
 
     attr_dictionary = getHash(from_query, require_tables)
+
+    if '*' in select_query:
+        return True, joinTable
 
     flag = 0
 
@@ -67,13 +70,13 @@ def execute_select(joinTable, select_query, from_query, require_tables):
         temp_table = []
         for row in joinTable:
             temp = []
-            for index in col:
+            for index in col_index:
                 temp.append(row[index])
             temp_table.append(temp)
 
         #operations on column
         sumArr = [0]*len(col_index)
-        distinctArr = [{}]*len(col_index)
+        distinctArr = [[]]*len(col_index)
         maxArr = []
         minArr = []
         for i in range(len(col_index)):
@@ -83,25 +86,28 @@ def execute_select(joinTable, select_query, from_query, require_tables):
         for row in temp_table:
             for i in range(len(col_index)):
                 element = row[i]
-                distinctArr[i][element] = 'a'
+                #distinctArr[i][int(element)] = 'a'
+                if element not in distinctArr[i]:
+                    distinctArr[i].append(element)
                 sumArr[i] = sumArr[i] + int(element)
-                maxArr[i] = max(maxArr[i], element)
-                minArr[i] = min(minArr[i], element)
+                maxArr[i] = max(int(maxArr[i]), int(element))
+                minArr[i] = min(int(minArr[i]), int(element))
 
         N = 0
         for x in temp_table:
             N = N + 1
 
+        finalTable = []
         for i in range(len(operation)):
-            if operation[i] in ['SUM','sum']:
+            if operation[i] in ['SUM','sum','Sum']:
                 finalTable.append(sumArr[i])
-            elif operation[i] in ['AVG','avg']:
+            elif operation[i] in ['AVG','avg','Avg']:
                 finalTable.append(sumArr[i]/(N * 1.0))
-            elif operation[i] in ['MAX', 'max']:
+            elif operation[i] in ['MAX', 'max','Max']:
                 finalTable.append(maxArr[i])
-            elif operation[i] in ['MIN', 'min']:
+            elif operation[i] in ['MIN', 'min','Min']:
                 finalTable.append(minArr[i])
-            elif operation[i] in ['DISTINCT', 'distinct']:
-                finalTable = finalTable=list(distinctArr[i].keys())
+            elif operation[i] in ['DISTINCT', 'distinct','Distinct']:
+                finalTable = distinctArr[i]
 
     return True, finalTable
